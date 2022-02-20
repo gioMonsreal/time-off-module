@@ -1,0 +1,117 @@
+version: "3.7"
+
+services:
+
+  app-db:
+    container_name: app-db
+    image: postgres:14
+    environment:
+        - POSTGRES_MULTIPLE_DATABASES=authorization-db, time-off-db
+        - POSTGRES_USER=itk
+        - POSTGRES_PASSWORD=itk2022
+        - PGDATA=/data/postgres
+    expose:
+      - 5432
+    ports:
+      - 5433:5432
+    volumes:
+    - postgres:/data/postgres
+    networks:
+      authorization-network:
+        ipv4_address: 10.5.0.4
+      postgres:
+    restart: unless-stopped
+  
+  app:
+    image: time-off-module-1.0
+    build:
+      context: ./time-off-module
+    container_name: time-off-module
+    depends_on:
+    - authorization_server
+    - app-db
+    environment:
+    - SPRING_DATASOURCE_URL=jdbc:postgresql://app-db:5432/time-off-db
+    - SPRING_DATASOURCE_USERNAME=itk
+    - SPRING_DATASOURCE_PASSWORD=itk2022
+    - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    ports:
+    - 8090:8090
+    networks:
+      spring:
+      postgres:
+      authorization-network:
+          ipv4_address: 10.5.0.7
+
+
+  authorization-server:
+    container_name: authorization-server
+    build:
+      context: ./authorization-server
+      dockerfile: Dockerfile
+    ports:
+      - "9000:9000"
+    depends_on:
+      - app-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://app-db:5432/authorization-db
+      - SPRING_DATASOURCE_USERNAME=itk
+      - SPRING_DATASOURCE_PASSWORD=itk2022
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    networks:
+      postgres:
+      authorization-network:
+        ipv4_address: 10.5.0.6
+
+  client-server:
+    container_name: client-server
+    build:
+      context: ./client-server
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - resource-server
+      - authorization-server
+      - app
+      - app-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://app-db:5432/authorization-db
+      - SPRING_DATASOURCE_USERNAME=itk
+      - SPRING_DATASOURCE_PASSWORD=itk2022
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    networks:
+      postgres:
+      authorization-network:
+        ipv4_address: 10.5.0.5
+  
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+    - pgadmin:/var/lib/pgadmin
+    ports:
+    - 5050:80
+    networks:
+    - postgres
+    restart: unless-stopped
+    
+networks:
+  authorization-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/16
+          gateway: 10.5.0.1
+  postgres:
+    driver: bridge
+  spring:
+    driver: bridge
+  
+volumes:
+  postgres: null
+  pgadmin: null

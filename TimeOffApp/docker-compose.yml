@@ -1,0 +1,58 @@
+version: '3.1'
+services:
+  APP:
+    image: time-off-module-1.0
+    build:
+      context: .
+    container_name: time-off-module-1.0
+    ports:
+      - "8080:8080"
+    depends_on:
+      - time-off-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://time-off-db:5432/timeoff
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    networks:
+      app_net: 
+        ipv4_address: 192.168.0.4
+    
+      
+  time-off-db:
+    container_name: time-off-db
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres 
+      POSTGRES_DB: timeoff 
+    ports:
+      - "5432:5432"
+    networks:
+      app_net:
+        ipv4_address: 192.168.0.2
+   
+  pgadmin:
+    container_name: pgadmin4
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - 5050:80
+    networks:
+      app_net:
+        ipv4_address: 192.168.0.3
+      
+networks:
+  app_net:
+    ipam:
+      driver: default
+      config:
+        - subnet: "192.168.0.0/24"
+          gateway: 192.168.0.1
+  
+  
+      
