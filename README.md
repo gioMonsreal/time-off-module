@@ -1,4 +1,4 @@
-# time-off-module
+# Time-off-module
 Time off module with Oauth 2.0 
 The following implementation provides a time off module, 
 in which time offs and time off requests are handled. By using 
@@ -17,18 +17,18 @@ Postgres and PgAdmin
 1. Download the project
 
 2. Run as an administrator the following commands:
+
 netsh int ip add addr 1 10.5.0.4/32 st=ac sk=tr
 netsh int ip add addr 1 10.5.0.5/32 st=ac sk=tr
 netsh int ip add addr 1 10.5.0.6/32 st=ac sk=tr
 netsh int ip add addr 1 10.5.0.7/32 st=ac sk=tr
 
-3. Then in the folder where the downloaded project is, open a command
-propmt and run "docker compose up"
+3. Then in the folder where the downloaded project is, open a commandpropmt and run "docker compose up"
 
 4. Verify the container is running in Docker Desktop
 
-5. Enter to http://localhost:5050 to get access to pgadmin,
-then create a new server if there is not one, with 
+5. Enter to http://localhost:5050 to get access to pgadmin, then create a new server if there is not one, with 
+
 hostname: app-db,
 
 username: itk,
