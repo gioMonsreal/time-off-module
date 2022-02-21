@@ -4,7 +4,7 @@ The following implementation provides a time off module,
 in which time offs and time off requests are handled. By using 
 Oauth 2.0, security is incorporated.
 
--------------------------------How to make it run-------------------------------------------
+---------------------------------------How to make it run-------------------------------------------
 
 Tools you'll need to run and test the container:
 Docker
@@ -30,12 +30,15 @@ propmt and run "docker compose up"
 5. Enter to http://localhost:5050 to get access to pgadmin,
 then create a new server if there is not one, with 
 hostname: app-db,
+
 username: itk,
+
 password: itk2022
 
 6. Then, create the two databases needed:
-1. authorization-db, and
-2. time-off-db
+a) authorization-db, and
+
+b) time-off-db
 
 7. Consequently, add the test data from the sql files by using
 the query tool. Run data from:
@@ -45,14 +48,20 @@ the query tool. Run data from:
 8. Check if all images are running, if not, run the missing ones.
 
 9. Go to http://localhost:8080 to login as:
+
 A USER: julio.vargas@theksquaregroup.com, Password: user
+
 A MANAGER: guillermo.ceme@theksquaregroup.com, Password: manager
+
 AN ADMIN: carlos.reyes@theksquaregroup.com, Password: admin
 
 10. To test the endpoints, go to postman and login.
 Choose the POST method and enter:
+
 http://10.5.0.6:9000/login?username=username&password=password,
+
 where username is one of the emails given.
+
 Example:
 http://10.5.0.6:9000/login?username=julio.vargas@theksquaregroup.com&password=use
 
@@ -60,14 +69,22 @@ http://10.5.0.6:9000/login?username=julio.vargas@theksquaregroup.com&password=us
 
 ---TIME OFFS---
 GET /timeOffs
+
 GET /timeOffs/{id}
+
 POST /timeOffs
+
 PATCH /timeOffs/{id}
 
 ---TIME OFF REQUESTS---
 GET /managers/{managerID}/timeOffRequests
+
 GET /managers/{managerID}/employees/{employeeID}/timeOffRequests/{timeOffRequestID}
+
 DELETE /employees/{employeeID}/timeOffRequests/{timeOffRequestID
+
 PATCH /managers/{managerID}/employees/{employeeID}/timeOffRequests/{timeOffRequestID}
+
 POST /managers/{managerID}/employees/{employeeID}/timeOffRequests
+
 GET /employees/{employeeID}/availableTimes
