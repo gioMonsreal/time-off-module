@@ -118,7 +118,7 @@
 		
 		
 		
-		
+		<!--
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
@@ -126,13 +126,13 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-config</artifactId>
-			<version>${spring.version}</version><!--$NO-MVN-MAN-VER$-->
+			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
-			<version>${spring.version}</version><!--$NO-MVN-MAN-VER$-->
-		</dependency>
+			<version>${spring.version}</version>$NO-MVN-MAN-VER$
+		</dependency>-->
 		
 	</dependencies>
 

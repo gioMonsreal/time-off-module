@@ -12,7 +12,7 @@ public class LoginConfiguration {
 
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-		httpSecurity.authorizeRequests(authorizeRequests -> authorizeRequests.anyRequest().authenticated()).oauth2Login(oauth2Login -> oauth2Login.loginPage("/oauth2/authorization/itk-client-oidc")).oauth2Client(withDefaults());
+		httpSecurity.authorizeRequests(authorizeRequests -> authorizeRequests.anyRequest().authenticated()).oauth2Login(oauth2Login -> oauth2Login.loginPage("/oauth2/authorization/itk-client-oidc")).oauth2Client(withDefaults()).csrf().disable();
 		return httpSecurity.build();
 	}
 	

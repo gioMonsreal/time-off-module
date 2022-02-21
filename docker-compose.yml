@@ -25,7 +25,7 @@ services:
   app:
     image: time-off-module-1.0
     build:
-      context: ./time-off-module
+      context: ./TimeOffApp
     container_name: time-off-module
     depends_on:
     - authorization_server
