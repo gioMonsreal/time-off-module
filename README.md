@@ -10,6 +10,7 @@ Tools you'll need to run and test the container:
 Docker
 Docker Desktop
 Postman
+
 Additionally:
 Spring tool suite
 Postgres and PgAdmin
