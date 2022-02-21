@@ -85,6 +85,7 @@ CREATE TABLE IF NOT EXISTS public.time_off_requests
 INSERT INTO time_off_requests (employee_id,manager_id,start_date,end_date,requested_time,status,time_off_employee_id)
 VALUES
 (1,1,'2022-03-04','2022-03-05', 8,'APPROVED', 1),
+(1,1,'2022-06-04','2022-06-05', 16,'PENDING', 1),
 (1,2,'2022-02-04','2022-02-05', 16,'DENIED', 2),
 (2,2,'2022-02-04','2022-02-05', 8,'APPROVED', 4),
 (3,3,'2022-02-04','2022-02-05', 8,'PENDING', 3),

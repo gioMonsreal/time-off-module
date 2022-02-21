@@ -116,8 +116,8 @@ public class ClientServerController {
 					.queryParamIfPresent("size", size)
 					.build())
 					.attributes(oauth2AuthorizedClient(oauth2AuthorizedClient)).exchangeToMono(response -> {
-						if (response.statusCode().isError() || response == null) {
-							return response.bodyToMono(GlobalExceptionHandler.class);
+						if (response.statusCode().isError()) {
+							return response.bodyToMono(Object.class);
 						} else {
 							return response.bodyToMono(Object.class);
 						}
@@ -135,8 +135,8 @@ public class ClientServerController {
 			return this.webClient.post().uri("http://10.5.0.7:8090/timeOffs").contentType(MediaType.APPLICATION_JSON)
 					.accept(MediaType.APPLICATION_JSON).body(Mono.just(timeOffRequestBody), TimeOffRequestBody.class)
 					.attributes(oauth2AuthorizedClient(oauth2AuthorizedClient)).exchangeToMono(response -> {
-						if (response.statusCode().is4xxClientError() || response.statusCode().is5xxServerError()) {
-							return response.bodyToMono(GlobalExceptionHandler.class);
+						if (response.statusCode().isError()) {
+							return response.bodyToMono(Object.class);
 						} else {
 							return response.bodyToMono(Object.class);
 						}
@@ -154,8 +154,9 @@ public class ClientServerController {
 		return this.webClient.patch().uri("http://10.5.0.7:8090/timeOffs/{id}", timeOffId).contentType(MediaType.APPLICATION_JSON)
 					.accept(MediaType.APPLICATION_JSON).body(Mono.just(timeOffPatchRequestBody), TimeOffPatchRequestBody.class)
 					.attributes(oauth2AuthorizedClient(oauth2AuthorizedClient)).exchangeToMono(response -> {
-						if (response.statusCode().is4xxClientError() || response.statusCode().is5xxServerError()) {
-							return response.bodyToMono(GlobalExceptionHandler.class);
+						if (response.statusCode().isError()) {
+							return response.bodyToMono(Object.class);
+							//throw new Exception(response.bodyToMono<GlobalExceptionHandler>(GlobalExceptionHandler.class));
 						} else {
 							return response.bodyToMono(Object.class);
 						}
@@ -168,7 +169,7 @@ public class ClientServerController {
 		  
 		 /////////************************
 		 //////GET TIME OFF REQUESTS BY MANAGER
-		@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_USER')")
+		@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
 		@RequestMapping(value="/managers/{managerID}/timeOffRequests", method = RequestMethod.GET)
 			public Object findTimeOffRequestByManager (
 					@RegisteredOAuth2AuthorizedClient("itk-client-authorization-code") OAuth2AuthorizedClient oauth2AuthorizedClient,
@@ -204,7 +205,7 @@ public class ClientServerController {
 	                .attributes(oauth2AuthorizedClient(oauth2AuthorizedClient))
 	                .accept(MediaType.APPLICATION_JSON).exchangeToMono(response -> {
 						if (response.statusCode().isError()) {
-							return response.bodyToMono(GlobalExceptionHandler.class);
+							return response.bodyToMono(Object.class);
 						} else {
 							return response.bodyToMono(Object.class);
 						}
@@ -223,7 +224,7 @@ public class ClientServerController {
 				return this.webClient.get().uri("http://10.5.0.7:8090/managers/{managerID}/employees/{employeeID}/timeOffRequests/{timeOffRequestID}", managerID,employeeID,timeOffRequestID)
 						.attributes(oauth2AuthorizedClient(oauth2AuthorizedClient)).exchangeToMono(response -> {
 							if (response.statusCode().isError()) {
-								return response.bodyToMono(GlobalExceptionHandler.class);
+								return response.bodyToMono(Object.class);
 							} else {
 								return response.bodyToMono(Object.class);
 							}
@@ -232,7 +233,7 @@ public class ClientServerController {
 		 	
 		 	/////////************************
 		//////////////////DELETE PENDING TIME OFF REQUEST
-		 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_USER')")
+		 	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
 		 	@RequestMapping(value="/employees/{employeeID}/timeOffRequests/{timeOffRequestID}", method = RequestMethod.DELETE)
 			public Object deleteTimeOffRequestByEmployeeAndTimeOffRequestId( 
 					@RegisteredOAuth2AuthorizedClient("itk-client-authorization-code") OAuth2AuthorizedClient oauth2AuthorizedClient,
@@ -250,7 +251,7 @@ public class ClientServerController {
 			}
 			
 			//////////////////UPDATE STATUS OF TIME OFF REQUEST
-		 	@PreAuthorize("hasAnyRole('ROLE_MANAGER')")
+		 	@PreAuthorize("hasAnyRole('ROLE_MANAGER','ROLE_ADMIN')")
 		 	@RequestMapping(value = "/managers/{managerID}/employees/{employeeID}/timeOffRequests/{timeOffRequestID}", method = RequestMethod.PATCH)
 			public Object updateStatusFromRequestFromAManager(@RegisteredOAuth2AuthorizedClient("itk-client-authorization-code") OAuth2AuthorizedClient oauth2AuthorizedClient,
 					@PathVariable(value = "managerID") Long managerID, 
@@ -261,8 +262,8 @@ public class ClientServerController {
 		 				managerID,employeeID,timeOffRequestID).contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON).body(Mono.just(timeOffRequestPatchRequestBody), TimeOffRequestPatchRequestBody.class)
 						.attributes(oauth2AuthorizedClient(oauth2AuthorizedClient)).exchangeToMono(response -> {
-							if (response.statusCode().is4xxClientError() || response.statusCode().is5xxServerError()) {
-								return response.bodyToMono(GlobalExceptionHandler.class);
+							if (response.statusCode().isError()) {
+								return response.bodyToMono(Object.class);
 							} else {
 								return response.bodyToMono(Object.class);
 							}
@@ -272,7 +273,7 @@ public class ClientServerController {
 		 	
 		 	///////////////////CREATE TIME OFF REQUEST
 		 	
-		 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_USER')")
+		 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 		 	@RequestMapping(value = "/managers/{managerID}/employees/{employeeID}/timeOffRequests", method = RequestMethod.POST)
 			public Object createTimeOffRequest(
 					@RegisteredOAuth2AuthorizedClient("itk-client-authorization-code") OAuth2AuthorizedClient oauth2AuthorizedClient,
@@ -283,7 +284,7 @@ public class ClientServerController {
 						.accept(MediaType.APPLICATION_JSON).body(Mono.just(timeOffRequestRequestBody), TimeOffRequestRequestBody.class)
 						.attributes(oauth2AuthorizedClient(oauth2AuthorizedClient)).exchangeToMono(response -> {
 							if (response.statusCode().is4xxClientError() || response.statusCode().is5xxServerError()) {
-								return response.bodyToMono(GlobalExceptionHandler.class);
+								return response.bodyToMono(Object.class);
 							} else {
 								return response.bodyToMono(Object.class);
 							}
@@ -292,7 +293,7 @@ public class ClientServerController {
 		 	
 		 	///////////////////GET AVAILABLE TIME FROM EMPLOYEE
 		 	
-		 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_USER')")
+		 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 		 	@RequestMapping(value = "/employees/{employeeID}/availableTimes", params = "hiringDate", method = RequestMethod.GET)
 		 	public Object getAvailableTimeByEmployeeId(
 		 			@RegisteredOAuth2AuthorizedClient("itk-client-authorization-code") OAuth2AuthorizedClient oauth2AuthorizedClient,
@@ -309,7 +310,7 @@ public class ClientServerController {
 		                .attributes(oauth2AuthorizedClient(oauth2AuthorizedClient))
 		                .accept(MediaType.APPLICATION_JSON).exchangeToMono(response -> {
 							if (response.statusCode().isError()) {
-								return response.bodyToMono(GlobalExceptionHandler.class);
+								return response.bodyToMono(Object.class);
 							} else {
 								return response.bodyToMono(Object.class);
 							}
@@ -319,14 +320,14 @@ public class ClientServerController {
 		 	
 		 	///////////////////GET AVAILABLE TIME FROM EMPLOYEE AND BY TIME OFF ID 
 		 	
-		 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_USER')")
+		 	@PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
 		 	@RequestMapping(value = "/employees/{employeeID}/availableTimes", params = {"hiringDate", "timeOffID"}, method = RequestMethod.GET)
 		 	public Object getAvailableTimeByEmployeeIdAndTimeOffId(
 		 			@RegisteredOAuth2AuthorizedClient("itk-client-authorization-code") OAuth2AuthorizedClient oauth2AuthorizedClient,
 		 			@PathVariable(value = "employeeID") Long employeeID,
 		 			@RequestParam(value = "hiringDate") String hiringDate,
 		 			@RequestParam(required = false) Optional<Long> timeOffID
-					) {
+					) throws Exception{
 		 		
 		 		return this.webClient
 		                .get()
@@ -338,7 +339,7 @@ public class ClientServerController {
 		                .attributes(oauth2AuthorizedClient(oauth2AuthorizedClient))
 		                .accept(MediaType.APPLICATION_JSON).exchangeToMono(response -> {
 							if (response.statusCode().isError()) {
-								return response.bodyToMono(GlobalExceptionHandler.class);
+								return response.bodyToMono(Object.class);
 							} else {
 								return response.bodyToMono(Object.class);
 							}
