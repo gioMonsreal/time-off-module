@@ -117,7 +117,7 @@ public class TimeOffRequestsServiceImpl implements TimeOffRequestsService{
 		TimeOffRequest timeOffRequest = new TimeOffRequest();
 		timeOffRequest.setEmployeeId(employeeID);
 		timeOffRequest.setManagerId(managerID);
-		timeOffRequest.setEndDate(timeOffRequestRequestBody.getStartDate());
+		timeOffRequest.setStartDate(timeOffRequestRequestBody.getStartDate());
 		timeOffRequest.setEndDate(timeOffRequestRequestBody.getEndDate());
 		timeOffRequest.setRequestedTime(timeOffRequestRequestBody.getRequestedTime());
 		timeOffRequest.setTimeOffEmployeeId(timeOffEmployeeId);
